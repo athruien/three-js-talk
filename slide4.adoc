@@ -1,0 +1,22 @@
+= Grundlagen: Objekte
+
+Drei Klassen zum Objekte bauen:
+
+.Geometrie
+* Konzept: Form des Objekts
+* es gibt etliche Vorgefertigte zur Auswahl
+* selbermachen: ein wenig 3D Vektorrechnung
+
+.Material
+* Konzept: Oberflächenbeschaffenheit des Objekts
+* gibt eine große Auswahl, Unterschiede leider nicht besonders gut dokumentiert
+* typische Stolpersteine
+  - Materialien haben nicht immer alle Optionen verfügbar
+  - In der Regel nur eine Seite dargestellt
+
+.Object
+* bestimmt Zusammensetzung von Geometrie und Material
+* z.B. Mesh ("klassisches" 3D Objekt), Line
+
+link:slide3.adoc[zurück]
+link:slide5.adoc[Code!]

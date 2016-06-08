@@ -1,7 +1,37 @@
-= Grundlagen: Objekte
+= Grundlagen: Kulisse - Code!
 
-Drei Klassen zum Objekte bauen:
+.1.: Szene - ordnet alle Elemente an
+```js
+var scene = new THREE.Scene();
+```
 
-* Geometrie - bestimmt die Form des Objekts
-* Material -  bestimmt Oberflächenbeschaffenheit des Objekts
-* Mesh - bestimmt Zusammensetzung von Geometrie und Material
+.2.: Kamera - definiert, welchen Teil der Szene man sieht
+```js
+var camera = new THREE.PerspectiveCamera(
+    75, // "Sichtfeld" - wie fokussiert ist die Kamera
+    viewport.offsetWidth/viewport.offsetHeight, // Seitenverhältnis (Bild ist sonst verzerrt)
+    0.1, // Minimale Blickweite (kein Clipping)
+    1000 // Maximale Blickweite (Performance, Vorsicht Stolperfalle!)
+);
+```
+
+.3.: Renderer - technische Hilfe, die die ganze Arbeit übernimmt
+```js
+var renderer = new THREE.WebGLRenderer();
+```
+
+.Im HTML verankern
+```js
+var viewport = document.getElementById('three-js-scene');
+viewport.appendChild(renderer.domElement);
+```
+
+.Render Loop
+```js
+(function render() {
+  requestAnimationFrame(render); // diese Funktion beim nächsten Zeichnen wieder ausführen
+  renderer.render(scene, camera); // Bild aktualisieren
+})();
+```
+
+link:slide4.adoc[ziemlich leer noch ...]

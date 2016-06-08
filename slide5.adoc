@@ -1,0 +1,33 @@
+= Grundlagen: Objekte
+
+.Geometrie
+```js
+var geometry = new THREE.SphereGeometry(
+  50, // radius
+  20, // Auflösung horizontal
+  20 // Auflösung vertikal
+  )
+```
+
+.Material
+```js
+var material = new THREE.MeshBasicMaterial(
+  {
+    color: 0x123456
+    // hier können in der Regel sehr viele Parameter übergeben werden
+  }
+  );
+```
+
+.Objekt
+```js
+var mesh = new THREE.Mesh(geometry, material);
+```
+
+.nicht vergessen: zur Szene hinzufügen
+```js
+scene.add(mesh);
+```
+
+link:slide4.adoc[zurück]
+link:slide6.adoc[Licht]

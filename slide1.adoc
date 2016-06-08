@@ -6,11 +6,15 @@
 * Abstraktion: Keine Kenntnisse mit Rendering und WebGL selbst erforderlich
 * Kompatibilität: Rendering auch auf alten Browsern ohne WebGL möglich (modulo Performance)
 
+== Inhalt
 
-== Aufbau
-
-* Grundlagen: Aufbau einer Szene
+* Grundlagen: Erstellen der Kulisse
 * Grundlagen: Erstellen von Objekten
-* Let's get fancy: Sonnensystem bauen
+* Extras: Bewegung, Licht
+
+== Voraussetzungen
+
+* Javascript (plain ES 5)
+* ein wenig html
 
 link:slide2.adoc[Go!]

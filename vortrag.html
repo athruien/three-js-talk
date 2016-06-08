@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>ThreeJS: 3D im Browser</title>
+    <style>
+      h1 {
+        font-size: 1.2em;
+      }
+      #three-js-scene {
+        width: 1024px;
+        height: 800px;
+      }
+    </style>
+    <script src="lib/three.min.js"></script>
+  </head>
+  <body>
+    <h1>Three JS - Fundamentals</h1>
+    <div id="three-js-scene"></div>
+    <p>
+      Welcome to three js!
+    </p>
+  </body>
+  <script>
+    // wohin mit dem kram
+    var viewport = document.getElementById('three-js-scene');
+
+    // instanzieren der Kulisse (kann man von der Website kopieren)
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(
+      75,
+      viewport.offsetWidth/viewport.offsetHeight,
+      1,
+      1000
+    );
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(viewport.offsetWidth, viewport.offsetHeight);
+
+    // bild ins dokument hängen
+    viewport.appendChild(renderer.domElement);
+
+    // instanzieren eines einfachen objekts
+    var geometry = new THREE.SphereGeometry(
+      50, // radius der Kugel
+      18, // auflösung
+      18
+    );
+    var texture = (new THREE.TextureLoader).load('texture/earth.jpg');
+    var material = new THREE.MeshStandardMaterial({
+      map: texture,
+      metalness: 0,
+      roughness: 1
+    });
+    var mesh = new THREE.Mesh(geometry, material);
+
+    scene.add(mesh);
+    camera.position.z = 100;
+
+    var light = new THREE.PointLight(
+      0xffeeff,
+      3
+    );
+    light.position.x = 50;
+    light.position.z = 75;
+    scene.add(light);
+
+    // render loop
+    (function render() {
+      requestAnimationFrame(render);
+      mesh.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    })();
+
+  </script>
+</html>

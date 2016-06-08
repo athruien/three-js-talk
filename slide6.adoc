@@ -1,0 +1,23 @@
+= Extras: Licht
+
+Es gibt verschiedene Lichtquellen, z.B.
+
+* Punktlicht - wie Glühbirne
+* Scheinwerferlicht
+* Umgebungslicht - positionsunabhängig
+
+Typische Stolpersteine:
+
+* Nicht alle Materialien reagieren auf alle Arten von Licht
+* Auch Lichter müssen zur Szene hinzugefügt werden
+* Position der Lichter entscheidend
+
+```js
+var light = new THREE.PointLight(
+  0xff9933, // Farbe
+  5 // intensität
+  )
+```
+
+link:slide5.adoc[zurück]
+link:slide7.adoc[Bewegung]

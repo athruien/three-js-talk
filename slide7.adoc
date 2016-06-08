@@ -1,0 +1,21 @@
+= Extras: Bewegung
+
+Grundlegende Eigenschaften für Objekte und Kamera:
+
+.Position
+* Lage im Raum
+* Kartesische Koordinaten (x/y/z)
+
+.Rotation
+* Drehung an Ort und Stelle
+
+.Bewegung
+* Rotation und/oder Position im render loop ändern
+
+.Beispiel
+```js
+camera.position.z = 100; // kamera etwas "zurück" setzen
+mesh.position.z += 1; // 1 richtung kamera bewegen
+```
+
+link:slide6.adoc[zurück]
