@@ -1,0 +1,16 @@
+= Willkommen zum three JS Lightning Talk!
+
+== Warum three JS?
+
+* Zugänglichkeit: Einfach und schnell 3D Szenen erstellen
+* Abstraktion: Keine Kenntnisse mit Rendering und WebGL selbst erforderlich
+* Kompatibilität: Rendering auch auf alten Browsern ohne WebGL möglich (modulo Performance)
+
+
+== Aufbau
+
+* Grundlagen: Aufbau einer Szene
+* Grundlagen: Erstellen von Objekten
+* Let's get fancy: Sonnensystem bauen
+
+link:slide2.adoc[Go!]

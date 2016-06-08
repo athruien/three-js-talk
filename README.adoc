@@ -1,0 +1,46 @@
+= ThreeJS fundamentals
+
+== Central Elements:
+
+.Setup
+
+Three things are needed as a kind of setup:
+
+- Scene: defines the whereabouts of things in 3D space
+- Camera: defines what can be seen
+- Renderer: actually paints all the stuff on a canvas
+
+.Stuff
+
+Three things are needed for any object:
+
+- Geometry: How is it shaped?
+- Material: What is it made of?
+- Mesh: Put both together in the right way.
+
+Aufbau Lightning Talk:
+
+.Was und warum three JS?
+
+- 3D Szenen einfach und schnell
+- keine vertieften Kentnisse in WebGL nötig
+- Kompatibilität: renderer für alte Browser (2D canvas)
+
+.Grundlagen: Szene
+
+Drei Klassen für grundlegenden Aufbau:
+
+* Szene - hier können Objekte, Lichtquellen etc. eingefügt werden
+* Kamera - bestimmt, welchen Teil der Szene man wahrnimmt (inkl. Perspektive)
+* Renderer - technischer Helfer, der das eigentliche Zeichnen übernimmt
+
+-> Kann man eigentlich alles schnell im Netz wiederfinden, wichtigsterx Fallstrick: Kamera (Positionierung und Reichweite)
+
+.Grundlagen: Objekte
+
+Drei Klassen zum Objekte bauen:
+
+* Geometrie - bestimmt die Form des Objekts
+* Material -  bestimmt Oberflächenbeschaffenheit des Objekts
+* Mesh - bestimmt Zusammensetzung von Geometrie und Material
+ü

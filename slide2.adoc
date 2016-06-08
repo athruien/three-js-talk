@@ -1,0 +1,22 @@
+= Grundlagen: Kulisse
+
+Drei Klassen, um Kulisse zu bauen:
+
+* Szene - ordnet alle Objekte im Raum an
+* Kamera - bestimmt, was man von der Szene sehen kann
+* Renderer - technischer Helfer, der alles malt
+
+```js
+var viewport = document.getElementsByClassName('three-js-scene')[0];
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(
+    75, // field of view
+    viewport.offsetWidth/viewport.offsetHeight, // aspect ration
+    0.1, // min distance
+    1000 // max distance
+);
+var renderer = new THREE.WebGLRenderer();
+viewport.appendChild(renderer.domElement);
+```
+
+link:effect.html[what it looks like]

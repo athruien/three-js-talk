@@ -1,0 +1,7 @@
+= Grundlagen: Objekte
+
+Drei Klassen zum Objekte bauen:
+
+* Geometrie - bestimmt die Form des Objekts
+* Material -  bestimmt Oberflächenbeschaffenheit des Objekts
+* Mesh - bestimmt Zusammensetzung von Geometrie und Material

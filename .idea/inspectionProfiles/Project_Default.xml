@@ -1,0 +1,36 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <option name="myLocal" value="true" />
+    <inspection_tool class="CyclicPackageDependency" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="CyclomaticComplexity" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="m_limit" value="7" />
+    </inspection_tool>
+    <inspection_tool class="CyclomaticComplexityJS" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="m_limit" value="7" />
+    </inspection_tool>
+    <inspection_tool class="LoggerInitializedWithForeignClass" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="loggerClassName" value="org.apache.log4j.Logger,org.slf4j.LoggerFactory,org.apache.commons.logging.LogFactory,java.util.logging.Logger" />
+      <option name="loggerFactoryMethodName" value="getLogger,getLogger,getLog,getLogger" />
+    </inspection_tool>
+    <inspection_tool class="LongLine" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="MissingPackageInfo" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="NestingDepth" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="m_limit" value="5" />
+    </inspection_tool>
+    <inspection_tool class="NestingDepthJS" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="m_limit" value="5" />
+    </inspection_tool>
+    <inspection_tool class="NewIssuesGlobalInspectionTool" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="OldIssuesGlobalInspectionTool" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ParametersPerConstructor" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="ignoreScope" value="PRIVATE" />
+    </inspection_tool>
+    <inspection_tool class="ParametersPerFunctionJS" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="m_limit" value="5" />
+    </inspection_tool>
+    <inspection_tool class="ParametersPerMethod" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="m_limit" value="5" />
+    </inspection_tool>
+  </profile>
+</component>

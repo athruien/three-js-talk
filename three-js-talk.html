@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ThreeJS: 3D im Browser</title>
+  <style>
+    h1 {
+      font-size: 1.2em;
+    }
+    .three-js-scene {
+      width: 1024px;
+      height: 800px;
+    }
+  </style>
+  <script src="lib/three.min.js"></script>
+</head>
+<body>
+<h1>Three JS - Fundamentals</h1>
+<div class="three-js-scene"></div>
+<p>
+  Welcome to three js!
+</p>
+</body>
+<script>
+
+  var SCALING = {
+    RADIUS: 1/3000,
+    CYCLE: 1/7500000
+  };
+
+  var RESOLUTION = {
+    HORIZONTAL: 50,
+    VERTICAL: 50
+  };
+
+  var DAYS_PER_FRAME = 1/10;
+
+  var PLANETS = {
+    EARTH: new Planet(6371, 149598023, 365.26,'texture/earth.jpg'),
+    VENUS: new Planet(6052, 108208000, 224.7, 'texture/venus.jpg'),
+    MERCURY: new Planet(2440, 57909050, 115.9, 'texture/mercury.png'),
+    MARS: new Planet(3390, 227939200, 780.0, 'texture/mars.jpg')
+  };
+
+  // creating the scene
+  var viewport = document.getElementsByClassName('three-js-scene')[0];
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(
+      75, // field of view
+      viewport.offsetWidth/viewport.offsetHeight, // aspect ration
+      0.1, // min distance
+      1000 // max distance
+  );
+  camera.position.z = 40;
+  camera.position.y = 20;
+  camera.lookAt(scene.position);
+  var renderer = new THREE.WebGLRenderer();
+
+				renderer.shadowMap.enabled = true;
+				renderer.shadowMap.type = THREE.BasicShadowMap;
+  renderer.setSize(viewport.offsetWidth, viewport.offsetHeight); // set correct dom element size
+  renderer.setClearColor(0x000000);
+  viewport.appendChild(renderer.domElement);
+
+  // add the sun
+  var light = new THREE.PointLight(0xffffff, 3, 2500);
+  light.castShadow = true;
+					light.shadow.camera.near = 1;
+					light.shadow.camera.far = 300;
+					light.shadowCameraVisible = true;
+					light.shadow.bias = 0.01;
+  scene.add(light);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.1));
+
+  var earth = PLANETS.EARTH;
+  var earthMesh = createPlanet(earth);
+  scene.add(earthMesh);
+
+  var venus = PLANETS.VENUS;
+  var venusMesh = createPlanet(venus);
+  scene.add(venusMesh);
+
+  var mercury = PLANETS.MERCURY;
+  var mercuryMesh = createPlanet(mercury);
+  scene.add(mercuryMesh);
+
+  var mars = PLANETS.MARS;
+  var marsMesh = createPlanet(mars);
+  scene.add(marsMesh);
+
+  var texture = new THREE.TextureLoader().load('texture/world.jpg');
+  var sphereGeometry = new THREE.SphereGeometry(500, 50, 50);
+  var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, shininess: 500, shading: THREE.SmoothShading, map: texture});
+  // var sphereMaterial = new THREE.MeshBasicMaterial({map: texture});
+  var world = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+  var textureSun = new THREE.TextureLoader().load('texture/sun.jpg');
+  var geometrySun = new THREE.SphereGeometry(200, 50, 50);
+  var sunMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, map: textureSun});
+  var sun = new THREE.Mesh(geometrySun, sunMaterial);
+
+  var textureMoon = new THREE.TextureLoader().load('texture/moon.jpg');
+  var sphereGeometryMoon = new THREE.SphereGeometry(200, 50, 50);
+  var sphereMaterialMoon = new THREE.MeshLambertMaterial({color: 0xffffff, shininess: 500, shading: THREE.SmoothShading, map: textureMoon});
+  // var sphereMaterial = new THREE.MeshBasicMaterial({map: texture});
+  var moon = new THREE.Mesh(sphereGeometryMoon, sphereMaterialMoon);
+
+  /*
+  scene.add(world);
+  scene.add(moon);
+  scene.add(sun);
+  */
+
+  var days = 0;
+
+  (function render() {
+    requestAnimationFrame(render);
+    days+=1 * DAYS_PER_FRAME;
+    earth.updatePosition(days, earthMesh.position);
+    venus.updatePosition(days, venusMesh.position);
+    mercury.updatePosition(days, mercuryMesh.position);
+    mars.updatePosition(days, marsMesh.position);
+    //console.log(earthMesh.position.x);
+    /*
+    var newPos = evalPos(phi),
+        moonPos = evalPos(2*phi);
+    world.position.x = newPos.x;
+    world.position.y = newPos.y;
+    world.position.z = newPos.z;
+    moon.position.x = world.position.x + moonPos.x/2;
+    moon.position.y = world.position.y;
+    moon.position.z = world.position.z + moonPos.z/2;
+    */
+    renderer.render(scene, camera);
+  })();
+
+  function evalPos(phi) {
+    return {
+      x: 2000*Math.cos(phi),
+      y: 0,
+      z: 2000*Math.sin(phi)
+    }
+  }
+
+  document.body.addEventListener('keydown', moveCamera);
+
+  function moveCamera(e) {
+    if (e.keyCode === 40) {
+      camera.position.y -= 20;
+    } else if (e.keyCode === 39) {
+      camera.position.x += 20;
+    } else if (e.keyCode === 38) {
+      camera.position.y += 20;
+    } else if (e.keyCode === 37) {
+      camera.position.x -= 20;
+    }
+  }
+
+  function CelestialBody(radius) {
+    this.radius = radius;
+  }
+
+  function createPlanet(planet) {
+    var geometry = new THREE.SphereGeometry(
+        planet.radius * SCALING.RADIUS,
+        RESOLUTION.HORIZONTAL,
+        RESOLUTION.VERTICAL
+    );
+    var material = new THREE.MeshLambertMaterial(
+        {
+          color: 0xffffff,
+          map: planet.texture
+        }
+    );
+    var mesh = new THREE.Mesh(geometry, material);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    return mesh;
+  }
+
+  function Planet(planetaryRadius, trajectoryRadius, daysPerCycle, texturePath) {
+    CelestialBody.call(this, planetaryRadius);
+    this.trajectoryRadius = trajectoryRadius;
+    this.daysPerCycle = daysPerCycle;
+    this.texture =  new THREE.TextureLoader().load(texturePath);
+    this.updatePosition = function (days, position) {
+      position.x = Math.cos(2*Math.PI/daysPerCycle * days) * trajectoryRadius * SCALING.CYCLE;
+      position.z = Math.sin(2*Math.PI/daysPerCycle * days) * trajectoryRadius * SCALING.CYCLE;
+    };
+  }
+
+</script>
+</html>

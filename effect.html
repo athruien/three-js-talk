@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ThreeJS: 3D im Browser</title>
+  <style>
+    h1 {
+      font-size: 1.2em;
+    }
+    .three-js-scene {
+      width: 1024px;
+      height: 800px;
+    }
+  </style>
+  <script src="lib/three.min.js"></script>
+</head>
+<body>
+<h1>Three JS - Grundlagen</h1>
+<div class="three-js-scene"></div>
+<p>
+  Erstellen der Kulisse <a href="slide3.adoc">(bissel leer)</a>
+</p>
+</body>
+<script>
+var viewport = document.getElementsByClassName('three-js-scene')[0];
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(
+    75, // field of view
+    viewport.offsetWidth/viewport.offsetHeight, // aspect ration
+    0.1, // min distance
+    1000 // max distance
+);
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize(viewport.offsetWidth, viewport.offsetHeight); // set correct dom element size
+viewport.appendChild(renderer.domElement);
+</script>
+</html>
