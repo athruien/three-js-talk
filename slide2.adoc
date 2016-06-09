@@ -24,4 +24,4 @@ Drei Klassen, um "Kulisse" zu bauen:
   - aufwendige Features (z.B. Schatten) müssen hier aktiviert werden
 
 link:slide1.adoc[zurück]
-link:slide3.adoc[Code!]
+link:slide4.adoc[Bissel leer noch ...]

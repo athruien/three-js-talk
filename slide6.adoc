@@ -19,5 +19,4 @@ var light = new THREE.PointLight(
   )
 ```
 
-link:slide5.adoc[zurück]
-link:slide7.adoc[Bewegung]
+link:slide7.adoc[zurück]

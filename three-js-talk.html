@@ -15,22 +15,22 @@
   <script src="lib/three.min.js"></script>
 </head>
 <body>
-<h1>Three JS - Fundamentals</h1>
-<div id="three-js-scene"></div>
-<p>
-  Welcome to three js!
-</p>
+<!--<h1>Three JS - Fundamentals</h1>-->
+<!--<div id="three-js-scene"></div>-->
+<!--<p>-->
+  <!--Welcome to three js!-->
+<!--</p>-->
 </body>
 <script>
 
   var SCALING = {
     RADIUS: 1/3000,
-    CYCLE: 1/7500000
+    CYCLE: 1/3000000
   };
 
   var RESOLUTION = {
-    HORIZONTAL: 50,
-    VERTICAL: 50
+    HORIZONTAL: 40,
+    VERTICAL: 40
   };
 
   var DAYS_PER_FRAME = 1/10;
@@ -43,11 +43,11 @@
   };
 
   // creating the scene
-  var viewport = document.getElementsById('three-js-scene');
+  var viewport = document.getElementById('three-js-scene');
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(
       75, // field of view
-      viewport.offsetWidth/viewport.offsetHeight, // aspect ration
+      window.innerWidth/window.innerHeight, // aspect ration
       0.1, // min distance
       1000 // max distance
   );
@@ -56,21 +56,21 @@
   camera.lookAt(scene.position);
   var renderer = new THREE.WebGLRenderer();
 
-				renderer.shadowMap.enabled = true;
+				//renderer.shadowMap.enabled = true;
 				renderer.shadowMap.type = THREE.BasicShadowMap;
-  renderer.setSize(viewport.offsetWidth, viewport.offsetHeight); // set correct dom element size
+  renderer.setSize(window.innerWidth, window.innerHeight); // set correct dom element size
   renderer.setClearColor(0x000000);
-  viewport.appendChild(renderer.domElement);
+  document.body.appendChild(renderer.domElement);
 
   // add the sun
-  var light = new THREE.PointLight(0xffffff, 3, 2500);
-  light.castShadow = true;
+  var light = new THREE.PointLight(0xffffff, 4, 2500);
+  light.castShadow = false;
 					light.shadow.camera.near = 1;
 					light.shadow.camera.far = 300;
 					light.shadowCameraVisible = true;
 					light.shadow.bias = 0.01;
   scene.add(light);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.1));
+  scene.add(new THREE.AmbientLight(0xffffff, 1));
 
   var earth = PLANETS.EARTH;
   var earthMesh = createPlanet(earth);
@@ -95,8 +95,13 @@
   var world = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
   var textureSun = new THREE.TextureLoader().load('texture/sun.jpg');
-  var geometrySun = new THREE.SphereGeometry(200, 50, 50);
-  var sunMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, map: textureSun});
+  var geometrySun = new THREE.SphereGeometry(109*earth.radius*SCALING.RADIUS/20, RESOLUTION.HORIZONTAL, RESOLUTION.VERTICAL);
+  var sunMaterial = new THREE.MeshStandardMaterial(
+      {color: 0xffffff,
+        map: textureSun,
+      metalness: 0,
+      roughness: 0}
+  );
   var sun = new THREE.Mesh(geometrySun, sunMaterial);
 
   var textureMoon = new THREE.TextureLoader().load('texture/moon.jpg');
@@ -105,21 +110,127 @@
   // var sphereMaterial = new THREE.MeshBasicMaterial({map: texture});
   var moon = new THREE.Mesh(sphereGeometryMoon, sphereMaterialMoon);
 
+  scene.add(sun);
+
+    earth.updatePosition(0, earthMesh.position);
+    venus.updatePosition(10, venusMesh.position);
+    mercury.updatePosition(20, mercuryMesh.position);
+    mars.updatePosition(15, marsMesh.position);
+
+  var POS_SCALING = 2.5;
+
+  var cameraMars = {
+    x: marsMesh.position.x+ POS_SCALING*1.5,
+    y: marsMesh.position.y,
+    z: marsMesh.position.z + POS_SCALING*0.1
+  },
+      cameraEarth = {
+        x: earthMesh.position.x,
+        y: earthMesh.position.y + POS_SCALING*1.1,
+        z: earthMesh.position.z - POS_SCALING*2
+      },
+      cameraVenus = {
+        x: venusMesh.position.x,
+        y: venusMesh.position.y - POS_SCALING*2,
+        z: venusMesh.position.z + POS_SCALING*2
+      },
+      cameraMercury = {
+        x: mercuryMesh.position.x,
+        y: mercuryMesh.position.y + POS_SCALING*0.4,
+        z: mercuryMesh.position.z + POS_SCALING*0.8
+      };
+
+  var SMOOTHING_BUFFER = 60,
+      TOTAL_FRAMES = 60 * 5,
+      distFacEarthVenus = (mars.trajectoryRadius - earth.trajectoryRadius)/(earth.trajectoryRadius - venus.trajectoryRadius),
+      distFactVenusMercury = (mars.trajectoryRadius - earth.trajectoryRadius)/(venus.trajectoryRadius - mercury.trajectoryRadius),
+      TOTAL_FRAMES_EV = TOTAL_FRAMES / distFacEarthVenus,
+      TOTAL_FRAMES_VM = TOTAL_FRAMES / distFactVenusMercury;
+  camera.position.x = cameraMars.x;
+  camera.position.y = cameraMars.y;
+  camera.position.z = cameraMars.z;
+//  camera.position.z += 1;
+//  camera.position.x += 2;
+  camera.lookAt(light.position);
+
+  var arc1 = arc(cameraMars, cameraEarth, TOTAL_FRAMES),
+      arc2 = arc(cameraEarth, cameraVenus, TOTAL_FRAMES_EV),
+      arc3 = arc(cameraVenus, cameraMercury, TOTAL_FRAMES_VM);
+
   /*
   scene.add(world);
   scene.add(moon);
   scene.add(sun);
   */
 
-  var days = 0;
+  function arc(start, dest, totalT) {
+
+    var deltaPhi = Math.PI / (2*totalT),
+        deltaX = dest.x - start.x,
+        deltaY = dest.y - start.y,
+        deltaZ = dest.z - start.z;
+
+    function factor(step) {
+      return 1-Math.cos(deltaPhi*step);
+    }
+
+    function interpolateAt(step) {
+      return {
+        x: start.x + factor(step) * deltaX,
+        y: start.y + factor(step) * deltaY,
+        z: start.z + factor(step) * deltaZ
+      }
+    }
+
+    return function setAt(t, object) {
+      var newPos = interpolateAt(t);
+      object.position.x = newPos.x;
+      object.position.y = newPos.y;
+      object.position.z = newPos.z;
+    }
+  }
+
+  var FRAME = 0,
+      BASE_ROTATION = 0.01;
 
   (function render() {
     requestAnimationFrame(render);
-    days+=1 * DAYS_PER_FRAME;
-    earth.updatePosition(days, earthMesh.position);
-    venus.updatePosition(days, venusMesh.position);
-    mercury.updatePosition(days, mercuryMesh.position);
-    mars.updatePosition(days, marsMesh.position);
+    FRAME += 1;
+    if (FRAME <= TOTAL_FRAMES) {
+      arc1(FRAME, camera);
+//    } else if (FRAME <= TOTAL_FRAMES) {
+//      var pos1 = {position: {}},
+//          pos2 = {position: {}},
+//          delta = (FRAME - TOTAL_FRAMES + SMOOTHING_BUFFER)/(SMOOTHING_BUFFER);
+//      arc1(FRAME, pos1);
+////    } else if (FRAME <= TOTAL_FRAMES + TOTAL_FRAMES_EV) {
+//      arc2(0, pos2);
+//      console.log(delta);
+//      camera.position.x = delta * pos2.position.x + (1-delta) * pos1.position.x;
+//      camera.position.y = delta * pos2.position.y + (1-delta) * pos1.position.y;
+//      camera.position.z = delta * pos2.position.z + (1-delta) * pos1.position.z;
+//      console.log(pos1.position);
+//      console.log(pos2.position);
+//      console.log(camera.position);
+    } else if (FRAME <= TOTAL_FRAMES + TOTAL_FRAMES_EV) {
+      arc2(FRAME - TOTAL_FRAMES, camera);
+    } else if (FRAME <= TOTAL_FRAMES + TOTAL_FRAMES_EV + TOTAL_FRAMES_VM) {
+      arc3(FRAME - TOTAL_FRAMES - TOTAL_FRAMES_EV, camera);
+    }
+    camera.lookAt(light.position);
+//    console.log(camera.position);
+    // days+= 0.1 * DAYS_PER_FRAME;
+
+    marsMesh.rotation.y += BASE_ROTATION / 24.37/23.56;
+    earthMesh.rotation.y += BASE_ROTATION; // norm: 23.56 h
+    venusMesh.rotation.y += BASE_ROTATION / (-243);
+    mercuryMesh.rotation.y += BASE_ROTATION / (1407.5/23.56);
+    sun.rotation.y += BASE_ROTATION/30;
+
+//    earth.updatePosition(days, earthMesh.position);
+//    venus.updatePosition(days, venusMesh.position);
+//    mercury.updatePosition(days, mercuryMesh.position);
+//    mars.updatePosition(days, marsMesh.position);
     //console.log(earthMesh.position.x);
     /*
     var newPos = evalPos(phi),
@@ -139,20 +250,6 @@
       x: 2000*Math.cos(phi),
       y: 0,
       z: 2000*Math.sin(phi)
-    }
-  }
-
-  document.body.addEventListener('keydown', moveCamera);
-
-  function moveCamera(e) {
-    if (e.keyCode === 40) {
-      camera.position.y -= 20;
-    } else if (e.keyCode === 39) {
-      camera.position.x += 20;
-    } else if (e.keyCode === 38) {
-      camera.position.y += 20;
-    } else if (e.keyCode === 37) {
-      camera.position.x -= 20;
     }
   }
 

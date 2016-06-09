@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ThreeJS: 3D im Browser</title>
+  <style>
+    h1 {
+      font-size: 1.2em;
+    }
+    #three-js-scene {
+      width: 1024px;
+      height: 800px;
+    }
+  </style>
+  <script src="lib/three.min.js"></script>
+</head>
+<body>
+<h1>Three JS - Grundlagen</h1>
+<div id="three-js-scene"></div>
+</body>
+<script>
+  // wohin mit dem kram
+  var viewport = document.getElementById('three-js-scene');
+
+  // instanzieren der Kulisse (kann man von der Website kopieren)
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(
+      75,
+      viewport.offsetWidth/viewport.offsetHeight,
+      1,
+      1000
+  );
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize(viewport.offsetWidth, viewport.offsetHeight);
+
+  // bild ins dokument hängen
+  viewport.appendChild(renderer.domElement);
+
+  // instanzieren eines einfachen objekts
+  var geometry = new THREE.SphereGeometry(
+      50, // radius der Kugel
+      80, // auflösung
+      80
+  );
+  var material = new THREE.MeshBasicMaterial({
+    color: 0x123456,
+    wireframe: true
+  });
+  var mesh = new THREE.Mesh(geometry, material);
+
+  scene.add(mesh);
+  camera.position.z = 100;
+
+  // render loop
+  (function render() {
+    requestAnimationFrame(render);
+    renderer.render(scene, camera);
+  })();
+</script>
+</html>

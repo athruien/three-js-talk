@@ -15,11 +15,11 @@
     <script src="lib/three.min.js"></script>
   </head>
   <body>
-    <h1>Three JS - Fundamentals</h1>
-    <div id="three-js-scene"></div>
-    <p>
-      Welcome to three js!
-    </p>
+    <!--<h1>Three JS - Fundamentals</h1>-->
+    <!--<div id="three-js-scene"></div>-->
+    <!--<p>-->
+      <!--Welcome to three js!-->
+    <!--</p>-->
   </body>
   <script>
     // wohin mit dem kram
@@ -29,27 +29,27 @@
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(
       75,
-      viewport.offsetWidth/viewport.offsetHeight,
+      window.innerWidth/window.innerHeight,
       1,
-      1000
+      120
     );
     var renderer = new THREE.WebGLRenderer();
-    renderer.setSize(viewport.offsetWidth, viewport.offsetHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
     // bild ins dokument hängen
-    viewport.appendChild(renderer.domElement);
+    document.body.appendChild(renderer.domElement);
 
     // instanzieren eines einfachen objekts
     var geometry = new THREE.SphereGeometry(
       50, // radius der Kugel
-      18, // auflösung
-      18
+      80, // auflösung
+      80
     );
     var texture = (new THREE.TextureLoader).load('texture/earth.jpg');
-    var material = new THREE.MeshStandardMaterial({
-      map: texture,
-      metalness: 0,
-      roughness: 1
+    var material = new THREE.MeshLambertMaterial({
+      map: texture
+//      metalness: 0,
+//      roughness: 1
     });
     var mesh = new THREE.Mesh(geometry, material);
 
