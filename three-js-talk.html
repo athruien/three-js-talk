@@ -25,7 +25,7 @@
 
   var SCALING = {
     RADIUS: 1/3000,
-    CYCLE: 1/3000000
+    CYCLE: 1/2300000
   };
 
   var RESOLUTION = {
@@ -95,7 +95,7 @@
   var world = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
   var textureSun = new THREE.TextureLoader().load('texture/sun.jpg');
-  var geometrySun = new THREE.SphereGeometry(109*earth.radius*SCALING.RADIUS/20, RESOLUTION.HORIZONTAL, RESOLUTION.VERTICAL);
+  var geometrySun = new THREE.SphereGeometry(109*earth.radius*SCALING.RADIUS/10, RESOLUTION.HORIZONTAL, RESOLUTION.VERTICAL);
   var sunMaterial = new THREE.MeshStandardMaterial(
       {color: 0xffffff,
         map: textureSun,
@@ -135,17 +135,18 @@
         z: venusMesh.position.z + POS_SCALING*2
       },
       cameraMercury = {
-        x: mercuryMesh.position.x,
+        x: mercuryMesh.position.x + POS_SCALING*0.8,
         y: mercuryMesh.position.y + POS_SCALING*0.4,
         z: mercuryMesh.position.z + POS_SCALING*0.8
       };
 
   var SMOOTHING_BUFFER = 60,
       TOTAL_FRAMES = 60 * 5,
-      distFacEarthVenus = (mars.trajectoryRadius - earth.trajectoryRadius)/(earth.trajectoryRadius - venus.trajectoryRadius),
-      distFactVenusMercury = (mars.trajectoryRadius - earth.trajectoryRadius)/(venus.trajectoryRadius - mercury.trajectoryRadius),
-      TOTAL_FRAMES_EV = TOTAL_FRAMES / distFacEarthVenus,
-      TOTAL_FRAMES_VM = TOTAL_FRAMES / distFactVenusMercury;
+      distFacEarthVenus = (earth.trajectoryRadius - venus.trajectoryRadius)/(mars.trajectoryRadius - earth.trajectoryRadius),
+      distFactVenusMercury = (venus.trajectoryRadius - mercury.trajectoryRadius)/(mars.trajectoryRadius - earth.trajectoryRadius),
+      TOTAL_FRAMES_EV = TOTAL_FRAMES * distFacEarthVenus,
+      TOTAL_FRAMES_VM = TOTAL_FRAMES * distFactVenusMercury,
+      TOTAL_FRAMES_BACK = TOTAL_FRAMES * (1+distFacEarthVenus+distFactVenusMercury);
   camera.position.x = cameraMars.x;
   camera.position.y = cameraMars.y;
   camera.position.z = cameraMars.z;
@@ -155,7 +156,8 @@
 
   var arc1 = arc(cameraMars, cameraEarth, TOTAL_FRAMES),
       arc2 = arc(cameraEarth, cameraVenus, TOTAL_FRAMES_EV),
-      arc3 = arc(cameraVenus, cameraMercury, TOTAL_FRAMES_VM);
+      arc3 = arc(cameraVenus, cameraMercury, TOTAL_FRAMES_VM),
+      arc4 = arc(cameraMercury, cameraMars, TOTAL_FRAMES_BACK);
 
   /*
   scene.add(world);
@@ -216,6 +218,10 @@
       arc2(FRAME - TOTAL_FRAMES, camera);
     } else if (FRAME <= TOTAL_FRAMES + TOTAL_FRAMES_EV + TOTAL_FRAMES_VM) {
       arc3(FRAME - TOTAL_FRAMES - TOTAL_FRAMES_EV, camera);
+    } else if (FRAME <= TOTAL_FRAMES + TOTAL_FRAMES_EV + TOTAL_FRAMES_VM + TOTAL_FRAMES_BACK) {
+      arc4(FRAME - TOTAL_FRAMES - TOTAL_FRAMES_EV - TOTAL_FRAMES_VM, camera);
+    } else {
+      FRAME = 0;
     }
     camera.lookAt(light.position);
 //    console.log(camera.position);
