@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ThreeJS: 3D im Browser</title>
+  <title>ThreeJS: Ausblick</title>
   <style>
     h1 {
       font-size: 1.2em;
@@ -70,7 +70,8 @@
 					light.shadowCameraVisible = true;
 					light.shadow.bias = 0.01;
   scene.add(light);
-  scene.add(new THREE.AmbientLight(0xffffff, 1));
+  var ambientLight = new THREE.AmbientLight(0xffffff, 1);
+  scene.add(ambientLight);
 
   var earth = PLANETS.EARTH;
   var earthMesh = createPlanet(earth);
@@ -95,7 +96,7 @@
   var world = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
   var textureSun = new THREE.TextureLoader().load('texture/sun.jpg');
-  var geometrySun = new THREE.SphereGeometry(109*earth.radius*SCALING.RADIUS/10, RESOLUTION.HORIZONTAL, RESOLUTION.VERTICAL);
+  var geometrySun = new THREE.SphereGeometry(109*earth.radius*SCALING.RADIUS/100, RESOLUTION.HORIZONTAL, RESOLUTION.VERTICAL);
   var sunMaterial = new THREE.MeshStandardMaterial(
       {color: 0xffffff,
         map: textureSun,
@@ -119,26 +120,31 @@
 
   var POS_SCALING = 2.5;
 
-  var cameraMars = {
-    x: marsMesh.position.x+ POS_SCALING*1.5,
-    y: marsMesh.position.y,
-    z: marsMesh.position.z + POS_SCALING*0.1
-  },
-      cameraEarth = {
-        x: earthMesh.position.x,
-        y: earthMesh.position.y + POS_SCALING*1.1,
-        z: earthMesh.position.z - POS_SCALING*2
-      },
-      cameraVenus = {
-        x: venusMesh.position.x,
-        y: venusMesh.position.y - POS_SCALING*2,
-        z: venusMesh.position.z + POS_SCALING*2
-      },
-      cameraMercury = {
-        x: mercuryMesh.position.x + POS_SCALING*0.8,
-        y: mercuryMesh.position.y + POS_SCALING*0.4,
-        z: mercuryMesh.position.z + POS_SCALING*0.8
-      };
+  var cameraMars = new THREE.Vector3(
+    marsMesh.position.x+ POS_SCALING*1.5,
+    marsMesh.position.y,
+    marsMesh.position.z + POS_SCALING*0.1
+  ),
+      cameraEarth = new THREE.Vector3(
+        earthMesh.position.x,
+        earthMesh.position.y + POS_SCALING*1.1,
+        earthMesh.position.z - POS_SCALING*2
+      ),
+      cameraVenus = new THREE.Vector3(
+        venusMesh.position.x,
+        venusMesh.position.y - POS_SCALING*2,
+        venusMesh.position.z + POS_SCALING*2
+      ),
+      cameraMercury = new THREE.Vector3(
+        mercuryMesh.position.x + POS_SCALING*0.8,
+        mercuryMesh.position.y + POS_SCALING*0.4,
+        mercuryMesh.position.z + POS_SCALING*0.8
+      ),
+      cameraFinal = new THREE.Vector3(
+        0,
+        85,
+        0
+      );
 
   var SMOOTHING_BUFFER = 60,
       TOTAL_FRAMES = 60 * 5,
@@ -147,6 +153,16 @@
       TOTAL_FRAMES_EV = TOTAL_FRAMES * distFacEarthVenus,
       TOTAL_FRAMES_VM = TOTAL_FRAMES * distFactVenusMercury,
       TOTAL_FRAMES_BACK = TOTAL_FRAMES * (1+distFacEarthVenus+distFactVenusMercury);
+
+      var cameraCurve = new THREE.SplineCurve3([
+        cameraMars,
+        cameraEarth,
+        cameraVenus,
+        cameraMercury
+        //cameraFinal
+      ]
+      );
+
   camera.position.x = cameraMars.x;
   camera.position.y = cameraMars.y;
   camera.position.z = cameraMars.z;
@@ -193,13 +209,13 @@
   }
 
   var FRAME = 0,
-      BASE_ROTATION = 0.01;
+    TOTAL_FRAMES = 60*20,
+      BASE_ROTATION = 0.01,
+      DAYS_PER_FRAME = 0.01,
+      days = 0;
 
   (function render() {
     requestAnimationFrame(render);
-    FRAME += 1;
-    if (FRAME <= TOTAL_FRAMES) {
-      arc1(FRAME, camera);
 //    } else if (FRAME <= TOTAL_FRAMES) {
 //      var pos1 = {position: {}},
 //          pos2 = {position: {}},
@@ -214,6 +230,7 @@
 //      console.log(pos1.position);
 //      console.log(pos2.position);
 //      console.log(camera.position);
+/*
     } else if (FRAME <= TOTAL_FRAMES + TOTAL_FRAMES_EV) {
       arc2(FRAME - TOTAL_FRAMES, camera);
     } else if (FRAME <= TOTAL_FRAMES + TOTAL_FRAMES_EV + TOTAL_FRAMES_VM) {
@@ -222,10 +239,26 @@
       arc4(FRAME - TOTAL_FRAMES - TOTAL_FRAMES_EV - TOTAL_FRAMES_VM, camera);
     } else {
       FRAME = 0;
+    */
+    if (FRAME <= TOTAL_FRAMES) {
+        FRAME += 1;
+      var position = cameraCurve.getPoint(FRAME/TOTAL_FRAMES);
+      camera.position.x = position.x;
+      camera.position.y = position.y;
+      camera.position.z = position.z;
+      camera.lookAt(light.position);
+    } else {
+      ambientLight.intensity -= 0.01;
+      light.intensity -= 0.01;
+        // days += DAYS_PER_FRAME;
+        // earth.updatePosition(0+days, earthMesh.position);
+        // venus.updatePosition(10+days, venusMesh.position);
+        // mercury.updatePosition(20+days, mercuryMesh.position);
+        // mars.updatePosition(15+days, marsMesh.position);
     }
-    camera.lookAt(light.position);
 //    console.log(camera.position);
     // days+= 0.1 * DAYS_PER_FRAME;
+
 
     marsMesh.rotation.y += BASE_ROTATION / 24.37/23.56;
     earthMesh.rotation.y += BASE_ROTATION; // norm: 23.56 h
@@ -269,11 +302,11 @@
         RESOLUTION.HORIZONTAL,
         RESOLUTION.VERTICAL
     );
-    var material = new THREE.MeshLambertMaterial(
-        {
-          color: 0xffffff,
-          map: planet.texture
-        }
+    var material = new THREE.MeshStandardMaterial(
+        {color: 0xffffff,
+          map: planet.texture,
+        metalness: 0,
+        roughness: 1}
     );
     var mesh = new THREE.Mesh(geometry, material);
     mesh.castShadow = true;

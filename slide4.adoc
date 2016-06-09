@@ -18,5 +18,5 @@ Drei Klassen zum Objekte bauen:
 * bestimmt Zusammensetzung von Geometrie und Material
 * z.B. Mesh ("klassisches" 3D Objekt), Line
 
-link:slide3.adoc[zurück]
-link:slide6.adoc[Positionierung]
+link:slide2.adoc[zurück]
+link:slide7.adoc[Positionierung]

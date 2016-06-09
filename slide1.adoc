@@ -16,5 +16,6 @@
 
 * Javascript (plain ES 5)
 * ein wenig html
+* gegen Ende ein wenig Geometrie
 
 link:slide2.adoc[Go!]

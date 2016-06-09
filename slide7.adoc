@@ -1,4 +1,4 @@
-= Extras: Bewegung
+= Extras: Positionierung
 
 Grundlegende Eigenschaften für Objekte und Kamera:
 
@@ -18,5 +18,5 @@ camera.position.z = 100; // kamera etwas "zurück" setzen
 mesh.position.z += 1; // 1 richtung kamera bewegen
 ```
 
-link:slide5.adoc[zurück]
+link:slide4.adoc[zurück]
 link:slide6.adoc[Licht]
