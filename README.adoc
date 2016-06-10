@@ -2,9 +2,7 @@
 
 A short talk on the basics of THREE js.
 
-Contents:
-
-.slides
+== Slides and Examples
 
 These require the asciidoctor plugin to render properly in chrome or firefox. They give a short overview of the most important classes and some typical beginners mistakes.
 
@@ -19,4 +17,10 @@ They are designed to be mixed with viewing the code from the html pages in the f
 * slide5.adoc
 * light.html (play around with material, intensity, positioning etc.)
 
+== Small Movie
+
 As an outlook, a small movie can be found in movingCamera.html; this can be done almost entirely with the few topics covered here.
+
+== Technical note
+
+The examples should run in firefox just fine. Because Chrome is more picky about loading files from the local file system, the examples will need to be served by a small Web server (e.g. the python SimpleHTTPServer), or chrome started with the "--allow-file-access-from-files" flag.
