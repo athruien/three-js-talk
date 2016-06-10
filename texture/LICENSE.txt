@@ -1,0 +1,4 @@
+Image Licenses:
+
+mars.jpg, venus.jpg, mercury.png and sun.jpg are public domain NASA images (found on wikipedia)
+earth.jpg is a public domain NASA image (found on the visibleearth.nasa.gov)

@@ -1,22 +1,22 @@
-= Grundlagen: Objekte
+= Extras: Positionierung
 
-Drei Klassen zum Objekte bauen:
+Grundlegende Eigenschaften für Objekte und Kamera:
 
-.Geometrie
-* Konzept: Form des Objekts
-* es gibt etliche Vorgefertigte zur Auswahl
-* selbermachen: ein wenig 3D Vektorrechnung
+.Position
+* Lage im Raum
+* Kartesische Koordinaten (x/y/z)
 
-.Material
-* Konzept: Oberflächenbeschaffenheit des Objekts
-* gibt eine große Auswahl, Unterschiede leider nicht besonders gut dokumentiert
-* typische Stolpersteine
-  - Materialien haben nicht immer alle Optionen verfügbar
-  - In der Regel nur eine Seite dargestellt
+.Rotation
+* Drehung an Ort und Stelle
 
-.Object
-* bestimmt Zusammensetzung von Geometrie und Material
-* z.B. Mesh ("klassisches" 3D Objekt), Line
+.Bewegung
+* Rotation und/oder Position im render loop ändern
 
-link:slide2.adoc[zurück]
-link:slide7.adoc[Positionierung]
+.Beispiel
+```js
+camera.position.z = 100; // kamera etwas "zurück" setzen
+mesh.position.z += 1; // 1 richtung kamera bewegen
+```
+
+link:slide3.adoc[zurück]
+link:slide5.adoc[Licht]

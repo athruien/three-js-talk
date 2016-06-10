@@ -1,33 +1,22 @@
-= Grundlagen: Objekte
+= Extras: Licht
 
-.Geometrie
+Es gibt verschiedene Lichtquellen, z.B.
+
+* Punktlicht - wie Glühbirne
+* Scheinwerferlicht
+* Umgebungslicht - positionsunabhängig
+
+Typische Stolpersteine:
+
+* Nicht alle Materialien reagieren auf alle Arten von Licht
+* Auch Lichter müssen zur Szene hinzugefügt werden
+* Position der Lichter entscheidend
+
 ```js
-var geometry = new THREE.SphereGeometry(
-  50, // radius
-  20, // Auflösung horizontal
-  20 // Auflösung vertikal
+var light = new THREE.PointLight(
+  0xff9933, // Farbe
+  5 // intensität
   )
 ```
 
-.Material
-```js
-var material = new THREE.MeshBasicMaterial(
-  {
-    color: 0x123456
-    // hier können in der Regel sehr viele Parameter übergeben werden
-  }
-  );
-```
-
-.Objekt
-```js
-var mesh = new THREE.Mesh(geometry, material);
-```
-
-.nicht vergessen: zur Szene hinzufügen
-```js
-scene.add(mesh);
-```
-
 link:slide4.adoc[zurück]
-link:slide6.adoc[Licht]

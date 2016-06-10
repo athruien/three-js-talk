@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ThreeJS: Kamerafahrt</title>
+  <script src="lib/three.min.js"></script>
+</head>
+<body>
+</body>
+<script>
+
+  var SCALING = {
+    RADIUS: 1 / 3000,
+    CYCLE: 1 / 2300000
+  };
+
+  var RESOLUTION = {
+    HORIZONTAL: 40,
+    VERTICAL: 40
+  };
+
+  var initialPositions = {
+    earth: -4,
+    venus: -7,
+    mercury: -15,
+    mars: 5
+  };
+
+  var PLANETS = {
+    EARTH: new Planet(6371, 149598023, 365.26, 'texture/earth.jpg'),
+    VENUS: new Planet(6052, 108208000, 224.7, 'texture/venus.jpg'),
+    MERCURY: new Planet(2440, 57909050, 115.9, 'texture/mercury.png'),
+    MARS: new Planet(3390, 227939200, 780.0, 'texture/mars.jpg')
+  };
+
+  // creating the scene
+  var viewport = document.getElementById('three-js-scene');
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(
+      75, // field of view
+      window.innerWidth / window.innerHeight, // aspect ration
+      0.1, // min distance
+      1000 // max distance
+  );
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight); // set correct dom element size
+  renderer.setClearColor(0x000000);
+  document.body.appendChild(renderer.domElement);
+
+  // add the sun as point light
+  var light = new THREE.PointLight(0xffffff, 0, 2500); // will be 4 intensity finally
+  scene.add(light);
+  var ambientLight = new THREE.AmbientLight(0xffffff, 0); // will be 1 intensity finally
+  scene.add(ambientLight);
+
+  var earth = PLANETS.EARTH;
+  var earthMesh = createPlanetObject(earth);
+  scene.add(earthMesh);
+
+  var venus = PLANETS.VENUS;
+  var venusMesh = createPlanetObject(venus);
+  scene.add(venusMesh);
+
+  var mercury = PLANETS.MERCURY;
+  var mercuryMesh = createPlanetObject(mercury);
+  scene.add(mercuryMesh);
+
+  var mars = PLANETS.MARS;
+  var marsMesh = createPlanetObject(mars);
+  scene.add(marsMesh);
+
+  // sun gets special treatment here because scaling it to the others planets isn't viable
+  var textureSun = new THREE.TextureLoader().load('texture/sun.jpg');
+  var geometrySun = new THREE.SphereGeometry(109 * earth.radius * SCALING.RADIUS / 100, RESOLUTION.HORIZONTAL, RESOLUTION.VERTICAL);
+  var sunMaterial = new THREE.MeshStandardMaterial(
+      {
+        color: 0xffffff,
+        map: textureSun,
+        metalness: 0,
+        roughness: 0
+      }
+  );
+  var sun = new THREE.Mesh(geometrySun, sunMaterial);
+  scene.add(sun);
+
+  var POS_SCALING = 2.5;
+
+  resetPlanets();
+
+  var cameraMars = new THREE.Vector3(
+          marsMesh.position.x + POS_SCALING * 2.0,
+      marsMesh.position.y,
+          marsMesh.position.z + POS_SCALING * 0.3
+      ),
+      cameraEarth = new THREE.Vector3(
+          earthMesh.position.x,
+          earthMesh.position.y + POS_SCALING * 1.1,
+          earthMesh.position.z - POS_SCALING * 2
+      ),
+      cameraVenus = new THREE.Vector3(
+          venusMesh.position.x,
+          venusMesh.position.y - POS_SCALING * 2,
+          venusMesh.position.z + POS_SCALING * 2
+      ),
+      cameraMercury = new THREE.Vector3(
+          mercuryMesh.position.x + POS_SCALING * 3.3,
+          mercuryMesh.position.y + POS_SCALING * 0.4,
+          mercuryMesh.position.z + POS_SCALING * 6.3
+      );
+
+  var cameraCurve = new THREE.SplineCurve3([
+        cameraMars,
+        cameraEarth,
+        cameraVenus,
+        cameraMercury
+      ]
+  );
+  resetCamera();
+
+  var frame = 0,
+      TOTAL_FRAMES = 60 * 20,
+      ROTATION_PER_FRAME = 0.01,
+      DAYS_PER_FRAME = 0.01,
+      days = 0;
+
+  (function render() {
+    requestAnimationFrame(render);
+
+    days += DAYS_PER_FRAME;
+
+    if (frame <= TOTAL_FRAMES) {
+      frame += 1;
+      if (frame < 40) {
+        ambientLight.intensity += 0.025;
+        light.intensity += 0.1;
+      }
+      var position = cameraCurve.getPoint(frame / TOTAL_FRAMES);
+      camera.position.x = position.x;
+      camera.position.y = position.y;
+      camera.position.z = position.z;
+      camera.lookAt(light.position);
+    } else if (frame <= TOTAL_FRAMES + 200) {
+      frame += 1;
+      ambientLight.intensity -= 0.005;
+      light.intensity -= 0.02;
+    } else {
+      frame = 0;
+      days = 0;
+      resetPlanets();
+      resetCamera();
+    }
+    earth.updatePosition(initialPositions.earth + days, earthMesh.position);
+    venus.updatePosition(initialPositions.venus + days, venusMesh.position);
+    mercury.updatePosition(initialPositions.mercury + days, mercuryMesh.position);
+    mars.updatePosition(initialPositions.mars + days, marsMesh.position);
+
+    marsMesh.rotation.y += ROTATION_PER_FRAME / 24.37 / 23.56;
+    earthMesh.rotation.y += ROTATION_PER_FRAME; // norm: 23.56 h
+    venusMesh.rotation.y += ROTATION_PER_FRAME / (-243);
+    mercuryMesh.rotation.y += ROTATION_PER_FRAME / (1407.5 / 23.56);
+    sun.rotation.y += ROTATION_PER_FRAME / 30;
+
+    renderer.render(scene, camera);
+  })();
+
+  function resetPlanets() {
+    earth.updatePosition(initialPositions.earth, earthMesh.position);
+    venus.updatePosition(initialPositions.venus, venusMesh.position);
+    mercury.updatePosition(initialPositions.mercury, mercuryMesh.position);
+    mars.updatePosition(initialPositions.mars, marsMesh.position);
+  }
+
+  function resetCamera() {
+    camera.position.x = cameraMars.x;
+    camera.position.y = cameraMars.y;
+    camera.position.z = cameraMars.z;
+    camera.lookAt(light.position);
+  }
+
+  function createPlanetObject(planet) {
+    var geometry = new THREE.SphereGeometry(
+        planet.radius * SCALING.RADIUS,
+        RESOLUTION.HORIZONTAL,
+        RESOLUTION.VERTICAL
+    );
+    var material = new THREE.MeshStandardMaterial(
+        {
+          color: 0xffffff,
+          map: planet.texture,
+          metalness: 0,
+          roughness: 1
+        }
+    );
+    var mesh = new THREE.Mesh(geometry, material);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    return mesh;
+  }
+
+  function Planet(planetaryRadius, trajectoryRadius, daysPerCycle, texturePath) {
+    this.radius = planetaryRadius;
+    this.texture = new THREE.TextureLoader().load(texturePath);
+    this.updatePosition = function (days, position) {
+      position.x = Math.cos(2 * Math.PI / daysPerCycle * days) * trajectoryRadius * SCALING.CYCLE;
+      position.z = Math.sin(2 * Math.PI / daysPerCycle * days) * trajectoryRadius * SCALING.CYCLE;
+    };
+  }
+
+</script>
+</html>
